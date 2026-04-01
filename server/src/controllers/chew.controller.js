@@ -20,6 +20,14 @@ export const getAssignedPatients = async (req, res, next) => {
                 state: true,
               },
             },
+            assessments: {
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              select: {
+                riskLevel: true,
+                createdAt: true,
+              }
+            }
           },
         },
       },
