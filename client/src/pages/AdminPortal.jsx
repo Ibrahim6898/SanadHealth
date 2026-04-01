@@ -3,7 +3,7 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminPortal() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [data, setData] = useState({ patients: [], chews: [], assignments: [] });
   const [loading, setLoading] = useState(true);
 
@@ -54,9 +54,14 @@ export default function AdminPortal() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 border-b pb-4">Admin Dashboard</h1>
-        <p className="mt-2 text-slate-500">Welcome, System Administrator ({user?.name})</p>
+      <div className="mb-8 flex justify-between items-end border-b pb-4">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Admin Dashboard</h1>
+          <p className="mt-2 text-slate-500">Welcome, System Administrator ({user?.name})</p>
+        </div>
+        <button onClick={logout} className="text-sm font-semibold text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition">
+          Sign out
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
