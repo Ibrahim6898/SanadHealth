@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ────────────────────────────────────
+
+enum Role {
+  PATIENT
+  CHEW
+  ADMIN
+}
+
+enum Language {
+  ENGLISH
+  HAUSA
+  PIDGIN
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+}
+
+enum DietType {
+  HIGH_CARB
+  BALANCED
+  HIGH_PROTEIN
+  VEGETARIAN
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ReadingType {
+  BLOOD_SUGAR
+  BLOOD_PRESSURE_SYSTOLIC
+  BLOOD_PRESSURE_DIASTOLIC
+  WEIGHT
+  BMI
+}
+
+// ─── USERS ────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  phone     String?
+  password  String
+  role      Role     @default(PATIENT)
+  language  Language @default(ENGLISH)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile         HealthProfile?
+  assessments     Assessment[]
+  readings        HealthReading[]
+  notifications   Notification[]
+  chewAssignments CHEWAssignment[] @relation("CHEWWorker")
+  patientOf       CHEWAssignment[] @relation("CHEWPatient")
+}
+
+// ─── HEALTH PROFILE ───────────────────────────
+
+model HealthProfile {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  age           Int
+  gender        String
+  weight        Float
+  height        Float
+  state         String
+  lga           String
+  familyHistory Boolean
+  smoker        Boolean
+  activityLevel ActivityLevel
+  dietType      DietType
+
+  updatedAt DateTime @updatedAt
+}
+
+// ─── ASSESSMENTS ──────────────────────────────
+
+model Assessment {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses        Json
+  riskLevel        RiskLevel
+  riskScore        Float
+  aiRecommendation String
+  recommendations  Json
+  urgentCare       Boolean   @default(false)
+  language         Language
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ─── HEALTH READINGS ──────────────────────────
+
+model HealthReading {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        ReadingType
+  value       Float
+  secondValue Float?      // for BP: systolic=value, diastolic=secondValue
+  unit        String
+  note        String?
+  createdAt   DateTime    @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ─── NOTIFICATIONS ────────────────────────────
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  type      String   // reminder | alert | tip
+  sent      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// ─── CHEW ASSIGNMENTS ─────────────────────────
+
+model CHEWAssignment {
+  id        String   @id @default(uuid())
+  chewId    String
+  patientId String
+  chew      User     @relation("CHEWWorker", fields: [chewId], references: [id])
+  patient   User     @relation("CHEWPatient", fields: [patientId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([chewId, patientId])
+  @@index([chewId])
+  @@index([patientId])
+}
