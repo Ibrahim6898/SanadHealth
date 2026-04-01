@@ -7,7 +7,9 @@ async function main() {
   // Create a demo CHEW
   const chew = await prisma.user.upsert({
     where: { email: 'chew_demo@sanadhealth.com' },
-    update: {},
+    update: {
+      password: '$2b$10$EPXG.kXJ/wTfQp/v8h3V1Oo0b.0rVQnE9.k.jQbq6l2U1H0W2YdMW'
+    },
     create: {
       name: 'Demo Health Worker',
       email: 'chew_demo@sanadhealth.com',
@@ -20,7 +22,9 @@ async function main() {
   // Create a demo PATIENT
   const patient = await prisma.user.upsert({
     where: { email: 'patient_demo@sanadhealth.com' },
-    update: {},
+    update: {
+      password: '$2b$10$EPXG.kXJ/wTfQp/v8h3V1Oo0b.0rVQnE9.k.jQbq6l2U1H0W2YdMW'
+    },
     create: {
       name: 'Demo Patient',
       email: 'patient_demo@sanadhealth.com',
@@ -62,7 +66,9 @@ async function main() {
   // Create an ADMIN user
   const admin = await prisma.user.upsert({
     where: { email: 'admin@sanadhealth.com' },
-    update: {},
+    update: {
+      password: '$2b$10$EPXG.kXJ/wTfQp/v8h3V1Oo0b.0rVQnE9.k.jQbq6l2U1H0W2YdMW'
+    },
     create: {
       name: 'System Administrator',
       email: 'admin@sanadhealth.com',
