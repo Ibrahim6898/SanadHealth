@@ -59,7 +59,21 @@ async function main() {
     }
   });
 
-  console.log('Database seeded successfully with Demo CHEW and Demo Patient!');
+  // Create an ADMIN user
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@sanadhealth.com' },
+    update: {},
+    create: {
+      name: 'System Administrator',
+      email: 'admin@sanadhealth.com',
+      password: '$2b$10$EPXG.kXJ/wTfQp/v8h3V1Oo0b.0rVQnE9.k.jQbq6l2U1H0W2YdMW', // Password: password123
+      phone: '08000000000',
+      role: 'ADMIN'
+    }
+  });
+
+  console.log('Database seeded successfully with Demo CHEW, Demo Patient, and System Admin!');
+  console.log('ADMIN Login: admin@sanadhealth.com / password123');
   console.log('CHEW Login: chew_demo@sanadhealth.com / password123');
   console.log('PATIENT Login: patient_demo@sanadhealth.com / password123');
 }
