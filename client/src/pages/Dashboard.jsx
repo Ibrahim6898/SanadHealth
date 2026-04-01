@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import HealthSummary from '../components/Dashboard/HealthSummary';
 import ReadingChart from '../components/Dashboard/ReadingChart';
+import ProfileSetup from '../components/Dashboard/ProfileSetup';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
@@ -10,22 +11,25 @@ export default function Dashboard() {
   const [profile, setProfile] = useState(null);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [showProfileForm, setShowProfileForm] = useState(false);
+
+  const fetchDashboardData = async () => {
+    try {
+      const [meRes, assessRes] = await Promise.all([
+        api.get('/users/me'),
+        api.get('/assessments')
+      ]);
+      setProfile(meRes.data.profile);
+      setAssessments(assessRes.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const [meRes, assessRes] = await Promise.all([
-          api.get('/users/me'),
-          api.get('/assessments')
-        ]);
-        setProfile(meRes.data.profile);
-        setAssessments(assessRes.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDashboardData();
   }, []);
 
@@ -61,32 +65,36 @@ export default function Dashboard() {
             <h3 className="font-bold">Complete your profile</h3>
             <p className="text-sm">You need a complete health profile before taking AI assessments.</p>
           </div>
-          {/* We'll skip building the full profile form for time, assume user enters dummy data or we auto-gen via API */}
-          <button className="bg-amber-600 px-4 py-2 rounded-lg text-white font-medium text-sm">Setup Profile</button>
+          <button onClick={() => setShowProfileForm(true)} className="bg-amber-600 px-4 py-2 rounded-lg text-white font-medium text-sm">Setup Profile</button>
         </div>
+      )}
+
+      {showProfileForm && (
+        <ProfileSetup onComplete={() => {
+          setShowProfileForm(false);
+          setLoading(true);
+          fetchDashboardData();
+        }} />
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <HealthSummary profile={profile} latestAssessment={latestAssessment} />
+          <HealthSummary profile={profile} latestAssessment={latestAssessment} onReadingLogged={fetchDashboardData} />
           
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
             <h2 className="text-xl font-bold text-slate-800 mb-6">Blood Sugar Trends</h2>
-            <ReadingChart />
+            <ReadingChart key={refreshKey} />
           </div>
         </div>
 
         <div className="space-y-8">
           {/* AI Advice Card */}
-          <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-xl p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-primary-500/20 blur-2xl"></div>
-            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
-              <span className="text-2xl">✨</span> Claude Advice
-            </h2>
+          <div className="bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-2xl p-6 shadow-lg lg:col-span-1">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">✨ AI-Powered Advice</h2>
             
             {latestAssessment ? (
               <div className="mt-4">
-                <p className="text-slate-200 text-sm leading-relaxed mb-4">
+                <p className="text-slate-100 text-sm leading-relaxed mb-4">
                   "{latestAssessment.aiRecommendation}"
                 </p>
                 <div className="space-y-2">
