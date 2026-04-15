@@ -22,6 +22,7 @@ export default function Dashboard() {
       ]);
       setProfile(meRes.data.profile);
       setAssessments(assessRes.data);
+      setRefreshKey(k => k + 1); // remount ReadingChart so it re-fetches
     } catch (err) {
       console.error(err);
     } finally {

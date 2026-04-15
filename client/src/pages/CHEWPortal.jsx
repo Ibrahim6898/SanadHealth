@@ -13,18 +13,24 @@ export default function CHEWPortal() {
 
   useEffect(() => {
     const fetchPortalData = async () => {
-      try {
-        const [patientsRes, alertsRes] = await Promise.all([
-          api.get('/chew/patients'),
-          api.get('/chew/alerts')
-        ]);
-        setPatients(patientsRes.data);
-        setAlerts(alertsRes.data);
-      } catch (err) {
-        console.error("Portal Data Error:", err);
-      } finally {
-        setLoading(false);
+      const [patientsResult, alertsResult] = await Promise.allSettled([
+        api.get('/chew/patients'),
+        api.get('/chew/alerts')
+      ]);
+
+      if (patientsResult.status === 'fulfilled') {
+        setPatients(patientsResult.value.data);
+      } else {
+        console.error("Failed to load patients:", patientsResult.reason);
       }
+
+      if (alertsResult.status === 'fulfilled') {
+        setAlerts(alertsResult.value.data);
+      } else {
+        console.error("Failed to load alerts:", alertsResult.reason);
+      }
+
+      setLoading(false);
     };
     
     fetchPortalData();
