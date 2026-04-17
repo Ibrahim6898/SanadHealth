@@ -18,7 +18,8 @@ export default function Login() {
     try {
       const { user } = await login(email, password);
       // Route based on role
-      if (user.role === 'CHEW') navigate('/chew');
+      if (user.role === 'ADMIN') navigate('/admin');
+      else if (user.role === 'CHEW') navigate('/chew');
       else navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check credentials.');

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import api from '../../services/api';
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-export default function HealthSummary({ profile, latestAssessment }) {
+export default function HealthSummary({ profile, latestAssessment, onReadingLogged }) {
   const [showModal, setShowModal] = useState(false);
   const [readingType, setReadingType] = useState('BLOOD_SUGAR');
   const [value, setValue] = useState('');
@@ -19,8 +19,7 @@ export default function HealthSummary({ profile, latestAssessment }) {
       });
       setShowModal(false);
       setValue('');
-      // In a real app we'd dispatch an update to re-fetch trends
-      window.location.reload(); 
+      if (onReadingLogged) onReadingLogged();
     } catch (err) {
       console.error(err);
       alert('Failed to log reading');

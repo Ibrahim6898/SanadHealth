@@ -1,5 +1,9 @@
 {
-  "dependencies": {
-    "@google/genai": "^1.48.0"
+  "name": "sanadhealth-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo \"Vercel will use the buildCommand in vercel.json\""
   }
 }

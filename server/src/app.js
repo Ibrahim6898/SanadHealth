@@ -11,6 +11,7 @@ import assessmentRoutes from "./routes/assessment.routes.js";
 import readingRoutes from "./routes/reading.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import chewRoutes from "./routes/chew.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import { errorMiddleware } from "./middleware/error.middleware.js";
 
 const app = express();
@@ -54,6 +55,7 @@ app.use("/api/assessments", assessmentRoutes);
 app.use("/api/readings", readingRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/chew", chewRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ─── 404 ──────────────────────────────────────
 app.use((_req, res) => {

@@ -6,6 +6,8 @@ import Home from './pages/Home';
 import Assessment from './pages/Assessment';
 import Dashboard from './pages/Dashboard';
 import CHEWPortal from './pages/CHEWPortal';
+import CHEWPatientDetail from './pages/CHEWPatientDetail';
+import AdminPortal from './pages/AdminPortal';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 
@@ -51,6 +53,16 @@ function App() {
             <Route path="/chew" element={
               <ProtectedRoute role="CHEW">
                 <CHEWPortal />
+              </ProtectedRoute>
+            } />
+            <Route path="/chew/patient/:id" element={
+              <ProtectedRoute role="CHEW">
+                <CHEWPatientDetail />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute role="ADMIN">
+                <AdminPortal />
               </ProtectedRoute>
             } />
           </Routes>
