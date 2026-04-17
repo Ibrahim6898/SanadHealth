@@ -46,7 +46,7 @@ Do not include any explanation outside of the JSON block. Do not use markdown fo
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
     });
 
@@ -58,6 +58,6 @@ Do not include any explanation outside of the JSON block. Do not use markdown fo
     return JSON.parse(clean);
   } catch (error) {
     console.error("AI Service Error:", error);
-    throw new Error("Failed to generate AI assessment");
+    throw new Error(`Failed to generate AI assessment: ${error.message}`);
   }
 };
