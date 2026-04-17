@@ -1,0 +1,8 @@
+{
+  "name": "sanadhealth-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "echo \"Vercel will use the buildCommand in vercel.json\""
+  }
+}
